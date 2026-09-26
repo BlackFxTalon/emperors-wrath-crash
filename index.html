@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0a0908" />
+    <title>Emperor's Wrath — Warp Charge Crash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=IM+Fell+English:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- 3D scene (bottom) -->
+    <canvas id="canvas-three"></canvas>
+    <!-- 2D HUD (top, transparent) -->
+    <canvas id="canvas-pixi"></canvas>
+
+    <!-- Betting / control panel (DOM for accessibility) -->
+    <aside id="bet-panel" data-phase="BETTING" aria-label="Launch controls">
+      <header class="panel-header">
+        <span class="aquila">&#9670;</span>
+        <h2>LAUNCH SANCTUM</h2>
+        <span class="aquila">&#9670;</span>
+      </header>
+
+      <div class="balance-row">
+        <span class="label">Throne Gelt</span>
+        <output id="balance" class="balance-value">1,000.00</output>
+      </div>
+
+      <div class="bet-row">
+        <label class="label" for="bet-input">Bet</label>
+        <input id="bet-input" type="number" min="1" step="1" value="50" inputmode="decimal" />
+        <div class="chips" role="group" aria-label="Quick bet chips">
+          <button class="chip" data-chip="10">10</button>
+          <button class="chip" data-chip="50">50</button>
+          <button class="chip" data-chip="100">100</button>
+          <button class="chip" data-chip="500">500</button>
+        </div>
+      </div>
+
+      <div class="auto-row">
+        <label class="label" for="auto-extract">Auto&#8209;extract</label>
+        <input id="auto-extract" type="number" min="1.01" step="0.01" value="2.00" inputmode="decimal" />
+        <label class="checkbox-label" for="auto-enabled">
+          <input id="auto-enabled" type="checkbox" checked />
+          arm
+        </label>
+      </div>
+
+      <button id="action-button" class="action-button" disabled>STANDBY</button>
+      <p id="action-hint" class="action-hint" aria-live="polite">The Machine-Spirit wakes…</p>
+      <p id="bet-message" class="bet-message" role="status" aria-live="polite"></p>
+    </aside>
+
+    <!-- Provably fair integrity panel -->
+    <aside id="integrity-panel" aria-label="Integrity">
+      <button id="integrity-toggle" class="integrity-toggle" title="Integrity of the Machine">
+        &#128737;&#65038; INTEGRITY
+      </button>
+      <div id="integrity-body" class="integrity-body hidden">
+        <h3>OMNISSIAH'S SEAL</h3>
+        <dt>Commitment · next round</dt>
+        <dd id="integrity-hash">&mdash;</dd>
+        <h3 class="sub">LAST PLAYED ROUND</h3>
+        <dt>Server seed (revealed)</dt>
+        <dd id="integrity-seed">&mdash;</dd>
+        <dt>Nonce</dt>
+        <dd id="integrity-nonce">&mdash;</dd>
+        <dt>Recomputed crash point</dt>
+        <dd id="integrity-crash">&mdash;</dd>
+        <p class="formula">
+          crash = floor(97 / (1 &minus; r)) / 100 &nbsp;where r = first 52 bits of
+          SHA&#8209;256(seed&nbsp;+&nbsp;": "&nbsp;+&nbsp;nonce) / 2&#8309;&#178;
+        </p>
+      </div>
+    </aside>
+
+    <!-- Loading gate -->
+    <div id="loading-screen">
+      <div class="loading-inner">
+        <div class="loading-sigil">&#9670;</div>
+        <h1>EMPEROR'S WRATH</h1>
+        <p id="loading-status">Communing with the Astronomican&hellip;</p>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
