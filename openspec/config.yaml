@@ -8,10 +8,10 @@ context: |
   via SHA-256 hash chain (seed + nonce) purely client-side for demo purposes.
   Assets: assets/exec-24e53c03-*.png = gothic hive city background (burning sky),
   assets/exec-544be0c1-*.png = gothic torpedo with red warp flame (transparent bg).
-  Style: gothic serif fonts (Cinzel/IM Fell), palette: blood red #8a0303, bone gold #c9a227,
+  Style: gothic serif fonts with Cyrillic support (Ruslan Display/Cormorant), palette: blood red #8a0303, bone gold #c9a227,
   void black #0a0908, purity white. Game terms WH40K-flavored: multiplier = "Warp Charge",
-  cash out = "Extraction", crash = "Warp Rift". Audience: desktop web, responsive to mobile.
-  Language: all user-facing text in English (grimdark tone), specs in English.
+  cash out = "Экстракция", crash = "Варп-разлом". Audience: desktop web, responsive to mobile.
+  Language: all user-facing text in Russian (grimdark tone), specs in English.
 
 rules:
   proposal:

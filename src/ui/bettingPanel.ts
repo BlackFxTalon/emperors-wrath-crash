@@ -26,6 +26,16 @@ interface Extraction {
   payout: number;
 }
 
+const REJECT_RU: Record<string, string> = {
+  window_closed: 'Торпеда уже стартовала, гвардеец.',
+  min_bet: 'Министорум требует ставку не менее 1,00 талера.',
+  insufficient: 'Недостаточно талеров Трона, гвардеец.',
+  already_armed: 'На одно стартовое окно дозволена лишь одна торпеда.',
+  nothing_to_recall: 'Отзывать нечего.',
+  already_extracted: 'Душа уже извлечена.',
+  no_stake: 'В полёте нет вашей ставки.',
+};
+
 export class BettingPanel {
   private el: Elements;
   private engine: CrashEngine;
@@ -95,17 +105,17 @@ export class BettingPanel {
     engine.on('betCancelled', () => this.refresh(true));
     engine.on('extraction', ({ multiplier, payout }) => {
       this.lastExtraction = { multiplier, payout };
-      this.showMessage(`Extraction at x${multiplier.toFixed(2)} — +${payout.toFixed(2)} Throne Gelt.`, false);
+      this.showMessage(`Экстракция на x${multiplier.toFixed(2)} — +${payout.toFixed(2)} талеров Трона.`, false);
       this.refresh(true);
     });
     engine.on('crash', ({ lostBet }) => {
       if (lostBet) {
         this.lostStake = this.armedAmount;
-        this.showMessage('Your torpedo was consumed by the Warp.');
+        this.showMessage('Ваша торпеда поглощена Варпом.');
       }
       this.refresh(true);
     });
-    engine.on('rejected', ({ reason }) => this.showMessage(reason));
+    engine.on('rejected', ({ reason }) => this.showMessage(REJECT_RU[reason] ?? reason));
 
     this.refresh(true);
   }
@@ -140,45 +150,45 @@ export class BettingPanel {
     switch (this.phase) {
       case 'BETTING': {
         if (this.betArmed) {
-          label = `RECALL TORPEDO · ${fmt(this.armedAmount)}`;
+          label = `ОТЗВАТЬ ТОРПЕДУ · ${fmt(this.armedAmount)}`;
           enabled = true;
           hint =
-            'Torpedo armed — extraction during flight locks your payout.' +
-            (this.autoTarget !== null ? ` Auto-extract at x${this.autoTarget.toFixed(2)}.` : '');
+            'Торпеда взведена — экстракция в полёте фиксирует выплату.' +
+            (this.autoTarget !== null ? ` Авто-экстракция на x${this.autoTarget.toFixed(2)}.` : '');
         } else {
           const s = this.countdown !== null ? this.countdown.toFixed(1) : '—';
-          label = `ARM TORPEDO · ${s}s`;
+          label = `ВЗВЕСТИ ТОРПЕДУ · ${s} с`;
           enabled = true;
-          hint = 'Place your stake before the launch window closes.';
+          hint = 'Взведите ставку до закрытия стартового окна.';
         }
         break;
       }
       case 'FLYING': {
         if (this.betArmed && !this.betSettled) {
-          label = `EXTRACT · x${this.currentMultiplier.toFixed(2)}`;
+          label = `ЭКСТРАКЦИЯ · x${this.currentMultiplier.toFixed(2)}`;
           enabled = true;
-          hint = `Click to lock x${this.currentMultiplier.toFixed(2)} × ${fmt(this.armedAmount)} — before the rift takes it.`;
+          hint = `Зафиксировать x${this.currentMultiplier.toFixed(2)} × ${fmt(this.armedAmount)} — прежде чем Разлом заберёт её.`;
           b.classList.add('extract');
         } else if (this.betSettled && this.lastExtraction) {
-          label = 'SOUL SECURED';
+          label = 'ДУША СПАСЕНА';
           enabled = false;
-          hint = `Extracted at x${this.lastExtraction.multiplier.toFixed(2)} — payout locked: +${fmt(
+          hint = `Экстракция на x${this.lastExtraction.multiplier.toFixed(2)} — выплата зафиксирована: +${fmt(
             this.lastExtraction.payout,
-          )} Throne Gelt. Watch the rest burn.`;
+          )} талеров. Дальше — только пепел.`;
         } else {
-          label = 'NO STAKE IN FLIGHT';
+          label = 'СТАВКИ НЕ БЫЛО';
           enabled = false;
-          hint = 'No bet was armed for this flight — arm one in the next window.';
+          hint = 'На этот полёт ставка не взводилась — окно откроется снова.';
         }
         break;
       }
       case 'CRASHED': {
-        label = 'WARP RIFT…';
+        label = 'ВАРП-РАЗЛОМ…';
         enabled = false;
         hint =
           this.lostStake !== null
-            ? `Your ${fmt(this.lostStake)} Throne Gelt burned with the torpedo.`
-            : 'Torpedo lost to the Empyrean — next window opens soon.';
+            ? `Ваши ${fmt(this.lostStake)} талеров сгорели вместе с торпедой.`
+            : 'Торпеда потеряна в Эмпиреях — скоро новое окно.';
         break;
       }
     }
@@ -206,5 +216,5 @@ export class BettingPanel {
 }
 
 function fmt(v: number): string {
-  return v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return v.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }

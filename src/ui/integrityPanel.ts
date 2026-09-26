@@ -1,7 +1,7 @@
 import { crashFromDigest, digestInput, sha256Hex } from '../engine/fair';
 import type { CrashEngine } from '../engine/CrashEngine';
 
-/** Provably-fair disclosure panel ("Omnissiah's Seal"). */
+/** Панель раскрытия проверяемой честности («Печать Омниссии»). */
 
 export class IntegrityPanel {
   private body: HTMLDivElement;
@@ -23,7 +23,7 @@ export class IntegrityPanel {
     // The commitment ticker only ever updates the "next round" line;
     // the last played round's verification stays until the next reveal.
     engine.on('commit', ({ commitHash, nonce }) => {
-      this.hashEl.textContent = `${commitHash.slice(0, 24)}… (nonce ${nonce})`;
+      this.hashEl.textContent = `${commitHash.slice(0, 24)}… (нонсе ${nonce})`;
     });
 
     engine.on('revealed', ({ commitHash, nonce, seed, crashPoint }) => {
@@ -38,10 +38,10 @@ export class IntegrityPanel {
     playedCrash: number,
   ): Promise<void> {
     const recomputed = crashFromDigest(await sha256Hex(digestInput(seed, nonce)));
-    this.hashEl.textContent = `${commitHash.slice(0, 24)}… (nonce ${nonce})`;
+    this.hashEl.textContent = `${commitHash.slice(0, 24)}… (нонсе ${nonce})`;
     this.seedEl.textContent = seed;
     this.nonceEl.textContent = String(nonce);
-    const match = recomputed === playedCrash ? '✓ verified' : '✗ MISMATCH';
-    this.crashEl.textContent = `played x${playedCrash.toFixed(2)} · recomputed x${recomputed.toFixed(2)} ${match}`;
+    const match = recomputed === playedCrash ? '✓ подтверждено' : '✗ НЕСОВПАДЕНИЕ';
+    this.crashEl.textContent = `сыграно x${playedCrash.toFixed(2)} · пересчитано x${recomputed.toFixed(2)} ${match}`;
   }
 }

@@ -243,20 +243,20 @@ export function createCrashEngine(deps: EngineDeps = {}): CrashEngine {
 
   function placeBet(amount: number, autoTarget: number | null = null): void {
     if (phase !== 'BETTING') {
-      emitter.emit('rejected', { reason: 'The torpedo has already launched, Guardsman.' });
+      emitter.emit('rejected', { reason: 'window_closed' });
       return;
     }
     const clean = trunc2(amount);
     if (!Number.isFinite(clean) || clean < 1) {
-      emitter.emit('rejected', { reason: 'The Ministorum demands a wager of at least 1.00.' });
+      emitter.emit('rejected', { reason: 'min_bet' });
       return;
     }
     if (clean > balance) {
-      emitter.emit('rejected', { reason: 'Insufficient Throne Gelt, Guardsman.' });
+      emitter.emit('rejected', { reason: 'insufficient' });
       return;
     }
     if (bet) {
-      emitter.emit('rejected', { reason: 'Only one torpedo per launch window.' });
+      emitter.emit('rejected', { reason: 'already_armed' });
       return;
     }
     const target =
@@ -270,7 +270,7 @@ export function createCrashEngine(deps: EngineDeps = {}): CrashEngine {
 
   function cancelBet(): void {
     if (phase !== 'BETTING' || !bet || bet.settled) {
-      emitter.emit('rejected', { reason: 'Nothing to recall.' });
+      emitter.emit('rejected', { reason: 'nothing_to_recall' });
       return;
     }
     const refund = bet.amount;
@@ -282,7 +282,7 @@ export function createCrashEngine(deps: EngineDeps = {}): CrashEngine {
   function cashOut(): void {
     if (phase !== 'FLYING' || !bet || bet.settled) {
       emitter.emit('rejected', {
-        reason: phase === 'FLYING' ? 'Already extracted.' : 'No torpedo in flight.',
+        reason: phase === 'FLYING' ? 'already_extracted' : 'no_stake',
       });
       return;
     }

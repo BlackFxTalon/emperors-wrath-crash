@@ -7,8 +7,8 @@ const GOLD_BRIGHT = '#e8c95a';
 const BLOOD = '#c41212';
 const BLOOD_DARK = '#8a0303';
 const PARCHMENT = '#f5f0e6';
-const GOTHIC = '"Cinzel", Georgia, serif';
-const FELL = '"IM Fell English", Georgia, serif';
+const DISPLAY = '"Ruslan Display", Georgia, serif';
+const SERIF = '"Cormorant", Georgia, serif';
 
 interface HistoryChip {
   bg: Graphics;
@@ -112,12 +112,12 @@ export class Hud {
 
     // ── Warp Charge counter ──────────────────────────────────────────
     this.multiplierCaption = new Text({
-      text: 'WARP CHARGE',
+      text: 'ВАРП-ЗАРЯД',
       style: new TextStyle({
-        fontFamily: GOTHIC,
+        fontFamily: DISPLAY,
         fontSize: 15,
-        fontWeight: '700',
-        letterSpacing: 8,
+        fontWeight: '400',
+        letterSpacing: 3,
         fill: GOLD,
         dropShadow: { color: 0x000000, alpha: 0.8, blur: 4, distance: 2 },
       }),
@@ -127,9 +127,9 @@ export class Hud {
     this.multiplierText = new Text({
       text: 'x1.00',
       style: new TextStyle({
-        fontFamily: GOTHIC,
+        fontFamily: SERIF,
         fontSize: 96,
-        fontWeight: '900',
+        fontWeight: '700',
         fill: GOLD_BRIGHT,
         stroke: { color: '#1a0d05', width: 8, join: 'round' },
         dropShadow: { color: 0x8a0303, alpha: 0.55, blur: 18, distance: 0 },
@@ -143,7 +143,7 @@ export class Hud {
     this.statusLine = new Text({
       text: '',
       style: new TextStyle({
-        fontFamily: FELL,
+        fontFamily: SERIF,
         fontSize: 19,
         fontStyle: 'italic',
         fill: PARCHMENT,
@@ -157,10 +157,10 @@ export class Hud {
     this.banner = new Text({
       text: '',
       style: new TextStyle({
-        fontFamily: GOTHIC,
+        fontFamily: DISPLAY,
         fontSize: 54,
-        fontWeight: '900',
-        letterSpacing: 10,
+        fontWeight: '400',
+        letterSpacing: 4,
         fill: BLOOD,
         stroke: { color: '#120404', width: 6, join: 'round' },
         dropShadow: { color: 0x000000, alpha: 0.9, blur: 10, distance: 3 },
@@ -172,7 +172,7 @@ export class Hud {
     this.bannerSub = new Text({
       text: '',
       style: new TextStyle({
-        fontFamily: FELL,
+        fontFamily: SERIF,
         fontSize: 20,
         fontStyle: 'italic',
         fill: PARCHMENT,
@@ -215,22 +215,22 @@ export class Hud {
       this.multiplierText.style.fill = lerpColor(GOLD_BRIGHT, BLOOD_BRIGHT_HEX, heat * 0.85);
       const scale = 1 + Math.min(0.25, Math.log2(Math.max(1, m)) * 0.05);
       this.multiplierText.scale.set(lerp(this.multiplierText.scale.x, scale, 0.1));
-      this.multiplierCaption.text = 'WARP CHARGE RISING';
+      this.multiplierCaption.text = 'ВАРП-ЗАРЯД РАСТЁТ';
       this.statusLine.text = tick.bet
         ? tick.bet.settled
-          ? `Soul secured — extraction paid ${tick.bet.payout.toFixed(2)}`
-          : `Torpedo armed · ${tick.bet.amount.toFixed(2)} Throne Gelt`
-        : 'No torpedo of yours in the warp…';
+          ? `Душа спасена — выплачено ${tick.bet.payout.toFixed(2)} талера`
+          : `Торпеда взведена · ${tick.bet.amount.toFixed(2)} талера`
+        : 'В Варпе нет вашей торпеды…';
     } else if (this.phase === 'BETTING') {
       this.multiplierText.style.fill = GOLD_BRIGHT;
       this.multiplierText.scale.set(lerp(this.multiplierText.scale.x, 1, 0.1));
-      this.multiplierCaption.text = 'NEXT LAUNCH';
+      this.multiplierCaption.text = 'СЛЕДУЮЩИЙ ЗАПУСК';
       this.statusLine.text =
-        tick.countdown !== null ? `The wrath ascends in ${tick.countdown.toFixed(1)}s` : '';
+        tick.countdown !== null ? `Гнев восходит через ${tick.countdown.toFixed(1)} с` : '';
     } else {
       this.multiplierText.style.fill = BLOOD;
       this.multiplierText.scale.set(lerp(this.multiplierText.scale.x, 1.12, 0.2));
-      this.multiplierCaption.text = 'THE WARP CLAIMS ALL';
+      this.multiplierCaption.text = 'ВАРП ПОЖИРАЕТ ВСЕХ';
     }
     void dt;
   }
@@ -238,20 +238,20 @@ export class Hud {
   private bannerTimer = 0;
   private updateBanners(tick: TickEvent, dt: number): void {
     if (this.phase === 'CRASHED') {
-      this.banner.text = 'WARP RIFT';
-      this.bannerSub.text = 'THE TORPEDO IS LOST TO THE EMPYREAN';
+      this.banner.text = 'ВАРП-РАЗЛОМ';
+      this.bannerSub.text = 'ТОРПЕДА ПОТЕРЯНА В ЭМПИРЕЯХ';
       this.banner.alpha = 0.75 + Math.sin(performance.now() * 0.008) * 0.25;
       this.bannerSub.alpha = this.banner.alpha;
     } else if (this.phase === 'FLYING' && this.bannerTimer < 2.2) {
       this.bannerTimer += dt;
       const k = Math.min(1, this.bannerTimer / 0.4);
-      this.banner.text = 'THE WRATH ASCENDS';
-      this.bannerSub.text = 'EXTRACT BEFORE THE RIFT TAKES IT';
+      this.banner.text = 'ГНЕВ ВОСХОДИТ';
+      this.bannerSub.text = 'ИЗВЛЕКИТЕ ДУШУ ДО УДАРА РАЗЛОМА';
       this.banner.alpha = this.bannerTimer < 1.6 ? k : Math.max(0, 1 - (this.bannerTimer - 1.6) / 0.6);
       this.bannerSub.alpha = this.banner.alpha;
     } else if (this.phase === 'BETTING') {
       this.banner.text = '';
-      this.bannerSub.text = tick.bet ? '' : 'ARM YOUR TORPEDO, GUARDSMAN';
+      this.bannerSub.text = tick.bet ? '' : 'ВЗВЕДИТЕ ТОРПЕДУ, ГВАРДЕЕЦ';
       this.banner.alpha = 0;
       this.bannerSub.alpha = 0.8 + Math.sin(performance.now() * 0.004) * 0.2;
     } else {
@@ -324,7 +324,7 @@ export class Hud {
     const label = new Text({
       text: `x${multiplier.toFixed(2)}`,
       style: new TextStyle({
-        fontFamily: GOTHIC,
+        fontFamily: SERIF,
         fontSize: 12,
         fontWeight: '700',
         fill: value,
@@ -352,10 +352,10 @@ export class Hud {
     const title2 = new Text({
       text: title,
       style: new TextStyle({
-        fontFamily: GOTHIC,
+        fontFamily: DISPLAY,
         fontSize: 30,
-        fontWeight: '900',
-        letterSpacing: 4,
+        fontWeight: '400',
+        letterSpacing: 2,
         fill: kind === 'win' ? GOLD_BRIGHT : kind === 'lose' ? BLOOD : PARCHMENT,
         stroke: { color: '#120404', width: 5, join: 'round' },
         dropShadow: { color: 0x000000, alpha: 0.9, blur: 8, distance: 2 },
@@ -368,7 +368,7 @@ export class Hud {
       const sub2 = new Text({
         text: sub,
         style: new TextStyle({
-          fontFamily: FELL,
+          fontFamily: SERIF,
           fontSize: 17,
           fontStyle: 'italic',
           fill: PARCHMENT,

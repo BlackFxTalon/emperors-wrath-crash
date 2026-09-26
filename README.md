@@ -1,74 +1,75 @@
-# Emperor's Wrath — Warp Charge Crash
+# Гнев Императора — Варп-заряд
 
-iGaming crash-game MVP in a Warhammer 40,000 grimdark style. A gothic torpedo climbs
-into the burning sky while the **Warp Charge** (multiplier) rises — extract your soul
-(cash out) before the **Warp Rift** tears it apart.
+MVP crash-игры в мрачной стилистике Warhammer 40,000. Готическая торпеда взмывает
+в пылающее небо, пока растёт **Варп-заряд** (множитель). Извлеките душу
+(зафиксируйте выплату), прежде чем её разорвёт **Варп-разлом**.
 
-Built with **Three.js** (3D scene, bottom layer) + **Pixi.js v8** (HUD, top layer),
-Vite and strict TypeScript. Spec-driven development via [OpenSpec](./openspec/).
+Проект собран на **Three.js** (3D-сцена, нижний слой) и **Pixi.js v8** (HUD, верхний
+слой), Vite и строгом TypeScript. Разработка ведётся по [OpenSpec](./openspec/).
 
-## Run
+## Запуск
 
 ```bash
 npm install
 npm run dev        # http://localhost:5173
 npm run build      # production bundle in dist/
-npm run preview    # serve the build
-npm test           # engine unit tests (vitest)
+npm run preview    # запуск собранной версии
+npm test           # unit-тесты движка (vitest)
 npm run spec:validate
-node tests/smoke.mjs   # headless full-round smoke test (builds required)
+node tests/smoke.mjs   # headless smoke-тест полного раунда (нужна сборка)
 ```
 
-## How to play
+## Как играть
 
-1. During **BETTING** (8 s countdown) set a bet and press **ARM TORPEDO**.
-2. During **FLYING** the multiplier grows exponentially: `m(t) = 2^(t/12s)`.
-3. Press **EXTRACT** (or let auto-extract trigger) to lock `bet × multiplier`.
-4. At the hidden crash point the torpedo is consumed by the Warp — unsettled bets are lost.
+1. Во время окна ставок (8 с) укажите сумму и нажмите **ВЗВЕСТИ ТОРПЕДУ**.
+2. В полёте множитель растёт экспоненциально: `m(t) = 2^(t/12s)`.
+3. Нажмите **ЭКСТРАКЦИЯ** (или дождитесь авто-экстракции), чтобы зафиксировать `ставка × множитель`.
+4. В скрытой точке краша торпеду поглощает Варп — незакрытые ставки сгорают.
 
-Demo credits only. Balance persists in `localStorage`.
+Это только демо-кредиты. Баланс хранится в `localStorage`.
 
-## Provably fair (demo)
+## Проверяемая честность (демо)
 
-Before each round the engine commits a SHA-256 hash; after the crash the seed is revealed:
+Перед каждым раундом движок публикует SHA-256-хеш обязательства; после краша раскрывается сид:
 
 ```
-r     = first 52 bits of SHA-256(serverSeed + ":" + nonce) / 2^52   — uniform [0, 1)
+r     = первые 52 бита SHA-256(serverSeed + ":" + nonce) / 2^52   — равномерно [0, 1)
 crash = clamp( floor(97 / (1 − r)) / 100, 1.00, 5000.00 )
 ```
 
-3 % house edge, ≈ 3 % of rounds crash instantly at x1.00, `P(crash ≥ x) ≈ 0.97 / x`.
-Seed chain: `S(n+1) = SHA-256(S(n))`, so the whole session is verifiable offline.
-**Demo-grade only** — a production title must move RNG authority to a server.
+Преимущество дома — 3 %; около 3 % раундов мгновенно крашатся на x1.00,
+`P(crash ≥ x) ≈ 0.97 / x`. Цепочка сидов: `S(n+1) = SHA-256(S(n))`, поэтому всю
+сессию можно проверить офлайн. **Только для демо**: в продуктовой игре источник RNG
+должен находиться на сервере.
 
-The **INTEGRITY** panel (bottom right) shows the next round's commitment and the
-last played round's seed with a recomputed crash point.
+Панель **ЦЕЛОСТНОСТЬ** внизу справа показывает обязательство следующего раунда и сид
+последнего сыгранного раунда вместе с пересчитанной точкой краша.
 
-## Architecture
+## Архитектура
 
 ```
 src/
-  engine/        renderer-agnostic round engine (state machine, fair RNG, multiplier clock)
-  render/three/  Three.js scene: hive-city backdrop, starfield, torpedo, warp trail, crash FX
-  render/pixi/   Pixi HUD: multiplier counter, banners, history strip, toasts, vignette
-  ui/            DOM panels (betting, balance persistence, integrity) + engine bridge
-tests/           vitest unit tests + Playwright smoke test
+  engine/        независимый от рендера движок раунда (состояния, честный RNG, часы множителя)
+  render/three/  Three.js-сцена: город-улей, звёзды, торпеда, варп-след, эффекты краша
+  render/pixi/   Pixi HUD: счётчик множителя, баннеры, история, тосты, виньетка
+  ui/            DOM-панели (ставка, хранение баланса, целостность) и мост движка
+tests/           unit-тесты vitest и smoke-тест Playwright
 ```
 
-The flight path is a pure function of flight time (`src/render/arc.ts`) shared by both
-renderers, so the 3D scene and the HUD can never drift apart. The Pixi ticker is the
-single RAF clock that also steps the engine.
+Траектория полёта — чистая функция времени (`src/render/arc.ts`), общая для обоих
+рендереров, поэтому 3D-сцена и HUD не расходятся. Ticker Pixi — единые RAF-часы,
+которые также обновляют движок.
 
-## WH40K glossary
+## Словарь WH40K
 
-| Term | Meaning |
+| Термин | Значение |
 | --- | --- |
-| Warp Charge | the multiplier |
-| Throne Gelt | demo credits |
-| Arm the torpedo | place a bet |
-| Extraction | cash out |
-| Warp Rift | the crash |
-| Launch Sanctum | betting panel |
-| Omnitssiah's Seal | provably-fair panel |
+| Варп-заряд | множитель |
+| Талеры Трона | демо-кредиты |
+| Взвести торпеду | сделать ставку |
+| Экстракция | зафиксировать выплату |
+| Варп-разлом | краш |
+| Святилище запуска | панель ставок |
+| Печать Омниссии | панель проверяемой честности |
 
-The Emperor protects.
+Император хранит.

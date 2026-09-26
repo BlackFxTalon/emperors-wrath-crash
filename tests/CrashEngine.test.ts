@@ -70,7 +70,7 @@ describe('CrashEngine round flow', () => {
     expect(h.engine.phase).toBe('BETTING');
   });
 
-  it('rejects bets during FLYING with grimdark message', async () => {
+  it('rejects bets during FLYING with a stable reason code', async () => {
     const h = makeHarness(2.0);
     await h.engine.start();
     h.advance(100);
@@ -79,9 +79,7 @@ describe('CrashEngine round flow', () => {
     h.engine.on('rejected', onRejected);
 
     h.engine.placeBet(10);
-    expect(onRejected).toHaveBeenCalledWith(
-      expect.objectContaining({ reason: expect.stringContaining('launched') }),
-    );
+    expect(onRejected).toHaveBeenCalledWith({ reason: 'window_closed' });
   });
 });
 
@@ -100,7 +98,7 @@ describe('betting & balance', () => {
     h.engine.on('rejected', onRejected);
     h.engine.placeBet(150);
     expect(h.engine.balance).toBe(100);
-    expect(onRejected).toHaveBeenCalled();
+    expect(onRejected).toHaveBeenCalledWith({ reason: 'insufficient' });
   });
 
   it('cancel during BETTING refunds', async () => {

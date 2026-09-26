@@ -1,5 +1,7 @@
 node_modules/
 dist/
+.playwright-cli/
+output/
 .pi/
 *.local
 .DS_Store

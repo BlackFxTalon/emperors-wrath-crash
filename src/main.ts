@@ -20,9 +20,10 @@ async function waitForFonts(): Promise<void> {
   try {
     await Promise.race([
       Promise.all([
-        document.fonts.load('900 96px Cinzel'),
-        document.fonts.load('700 15px Cinzel'),
-        document.fonts.load('italic 19px "IM Fell English"'),
+        document.fonts.load('400 54px "Ruslan Display"', 'ГНЕВ'),
+        document.fonts.load('700 96px "Cormorant"', 'x1.00'),
+        document.fonts.load('italic 600 19px "Cormorant"', 'торпеда'),
+        document.fonts.load('600 16px "Cormorant"', 'ставка'),
       ]),
       new Promise((r) => setTimeout(r, 2500)),
     ]);
@@ -32,12 +33,12 @@ async function waitForFonts(): Promise<void> {
 }
 
 async function loadAssets(): Promise<SceneAssets> {
-  setStatus('Awakening the Machine-Spirit…');
+  setStatus('Будим Машинный дух…');
   const assets: SceneAssets = { sky: null, torpedo: null };
 
   const sky = await loadTexture(SKY_URL);
   if (sky) assets.sky = sky;
-  else setStatus('Sky-plate lost to the Warp — invoking fallbacks…');
+  else setStatus('Карта неба потеряна в Варпе — включаем фолбэки…');
 
   assets.torpedo = await loadTexture(TORPEDO_URL);
   if (!assets.torpedo) console.warn('[assets] torpedo.png failed — procedural fallback engaged');
@@ -56,7 +57,7 @@ async function loadTexture(url: string): Promise<THREE.Texture | null> {
 }
 
 async function boot(): Promise<void> {
-  setStatus('Communing with the Astronomican…');
+  setStatus('Просим Астрономикон…');
   await waitForFonts();
 
   const engine = createCrashEngine({ initialBalance: loadBalance() });
@@ -64,7 +65,7 @@ async function boot(): Promise<void> {
 
   const assets = await loadAssets();
 
-  setStatus('Igniting the warp drives…');
+  setStatus('Воспламеняем варп-двигатели…');
   const threeCanvas = document.querySelector<HTMLCanvasElement>('#canvas-three')!;
   const pixiCanvas = document.querySelector<HTMLCanvasElement>('#canvas-pixi')!;
   const scene = new ThreeScene();
@@ -87,10 +88,14 @@ async function boot(): Promise<void> {
   });
   engine.on('crash', ({ crashPoint, lostBet }) => {
     hud.addHistory(crashPoint);
-    if (lostBet) hud.toast('lose', 'CONSUMED BY THE WARP', `The rift closed at x${crashPoint.toFixed(2)}`);
+    if (lostBet) hud.toast('lose', 'ПОГЛОЩЕНО ВАРПОМ', `Разлом сомкнулся на x${crashPoint.toFixed(2)}`);
   });
   engine.on('extraction', ({ multiplier, payout, auto }) => {
-    hud.toast('win', `SOUL SAVED — x${multiplier.toFixed(2)}`, `${auto ? 'Auto-extraction' : 'Manual extraction'} · +${payout.toFixed(2)} Throne Gelt`);
+    hud.toast(
+      'win',
+      `ДУША СПАСЕНА — x${multiplier.toFixed(2)}`,
+      `${auto ? 'Авто-экстракция' : 'Ручная экстракция'} · +${payout.toFixed(2)} талера`,
+    );
   });
 
   // ── panels ───────────────────────────────────────────────────────────
@@ -127,5 +132,5 @@ async function boot(): Promise<void> {
 
 void boot().catch((err) => {
   console.error('[boot] the Machine-Spirit raged:', err);
-  setStatus('The Machine-Spirit rages. Reload the shrine.');
+  setStatus('Машинный дух взбунтовался. Перезапустите храм.');
 });

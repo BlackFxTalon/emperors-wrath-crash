@@ -10,14 +10,15 @@
   --parchment: #f5f0e6;
   --ash: #7d7466;
   --panel-border: #3a3128;
-  --font-gothic: 'Cinzel', 'Georgia', serif;
-  --font-fell: 'IM Fell English', 'Georgia', serif;
-  --fs-label: 15px;
-  --fs-hint: 13.5px;
-  --fs-balance: 22px;
-  --fs-input: 15px;
-  --fs-chip: 13px;
-  --fs-button: 17px;
+  --font-display: 'Ruslan Display', 'Cinzel', Georgia, serif;
+  --font-gothic: 'Cormorant', Georgia, serif;
+  --font-fell: 'Cormorant', Georgia, serif;
+  --fs-label: 16px;
+  --fs-hint: 14.5px;
+  --fs-balance: 24px;
+  --fs-input: 16px;
+  --fs-chip: 15px;
+  --fs-button: 18px;
 }
 
 * {
@@ -34,6 +35,7 @@ body {
   background: var(--void);
   color: var(--parchment);
   font-family: var(--font-gothic);
+  font-weight: 600;
   -webkit-font-smoothing: antialiased;
   user-select: none;
 }
@@ -64,7 +66,8 @@ body {
   left: 16px;
   bottom: 16px;
   z-index: 10;
-  width: 316px;
+  /* Cyrillic labels and all four quick-stake chips must remain on one desktop row. */
+  width: 350px;
   padding: 14px 16px 16px;
   background: var(--void-panel);
   border: 1px solid var(--panel-border);
@@ -82,9 +85,10 @@ body {
 }
 
 .panel-header h2 {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.22em;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
   color: var(--bone-gold);
 }
 
@@ -193,10 +197,10 @@ input[type='checkbox'] {
   width: 100%;
   margin-top: 4px;
   padding: 14px 0;
-  font-family: var(--font-gothic);
+  font-family: var(--font-display);
   font-size: var(--fs-button);
-  font-weight: 900;
-  letter-spacing: 0.18em;
+  font-weight: 400;
+  letter-spacing: 0.06em;
   color: var(--parchment);
   background: linear-gradient(180deg, #7a0606 0%, #4a0202 60%, #2c0101 100%);
   border: 1px solid var(--blood-bright);
@@ -339,8 +343,9 @@ input[type='checkbox'] {
 .integrity-toggle {
   padding: 8px 14px;
   font-family: var(--font-gothic);
-  font-size: 12px;
-  letter-spacing: 0.18em;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   color: var(--ash);
   background: var(--void-panel);
   border: 1px solid var(--panel-border);
@@ -454,9 +459,10 @@ input[type='checkbox'] {
 
 .loading-inner h1 {
   margin: 18px 0 10px;
-  font-size: 34px;
-  font-weight: 900;
-  letter-spacing: 0.3em;
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
   color: var(--bone-gold);
   text-shadow: 0 0 24px rgba(201, 162, 39, 0.4);
 }
@@ -474,12 +480,12 @@ input[type='checkbox'] {
 
 @media (max-width: 720px) {
   :root {
-    --fs-label: 15px;
-    --fs-hint: 14px;
-    --fs-balance: 24px;
-    --fs-input: 16px; /* ≥16px prevents iOS focus auto-zoom */
-    --fs-chip: 14px;
-    --fs-button: 18px;
+    --fs-label: 16px;
+    --fs-hint: 15px;
+    --fs-balance: 26px;
+    --fs-input: 17px; /* ≥16px prevents iOS focus auto-zoom */
+    --fs-chip: 16px;
+    --fs-button: 20px;
   }
 
   #bet-panel {
